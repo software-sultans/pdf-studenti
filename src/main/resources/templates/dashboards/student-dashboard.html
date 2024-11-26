@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Manager Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container text-center">
+  <h1 class="my-4">Welcome, Manager!</h1>
+  <p>This is your dashboard. You can manage inventory and product registration here.</p>
+
+  <!-- Action buttons for the manager -->
+  <div class="my-4">
+    <a href="/manager/inventory" class="btn btn-primary mx-2">Modifica Stocul</a>
+    <a href="/manager/add-item" class="btn btn-success mx-2">Inregistrare Produse</a>
+  </div>
+
+  <!-- Placeholder for additional manager content -->
+  <div class="content-placeholder my-5">
+    <p>More managerial options will be added here in the future.</p>
+  </div>
+</div>
+</body>
+</html>
