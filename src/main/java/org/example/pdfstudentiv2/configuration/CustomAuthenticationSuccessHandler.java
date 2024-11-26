@@ -18,12 +18,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String redirectUrl = "/home"; // Default redirect if no role matches
 
         // Check user role and set redirect URL
-        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MANAGER"))) {
-            redirectUrl = "/manager/dashboard";
-        } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BARTENDER"))) {
-            redirectUrl = "/bartender/dashboard";
-        } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLIENT"))) {
-            redirectUrl = "/client/dashboard";
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))) {
+            redirectUrl = "/student/dashboard";
+        } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PROFESSOR"))) {
+            redirectUrl = "/professor/dashboard";
+            System.out.println("AICI AJUNGE BAAA");
         }
 
         response.sendRedirect(redirectUrl);

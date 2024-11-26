@@ -1,10 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <title>Upload PDF</title>
 </head>
 <body>
-$END$
+<h1>Upload PDF</h1>
+
+<form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+    <label for="file">Choose a PDF:</label>
+    <input type="file" id="file" name="file" accept="application/pdf" required>
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Your Uploaded PDFs</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Filename</th>
+        <th>Path</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pdf : ${pdfs}">
+        <td th:text="${pdf.filename}"></td>
+        <td th:text="${pdf.filepath}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+</title>
+</head>
+<body>
+
 </body>
 </html>
