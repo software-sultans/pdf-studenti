@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Professor PDF Dashboard</title>
+</head>
+<body>
+<h1>Student PDF Submissions</h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Student</th>
+    <th>Filename</th>
+    <th>Path</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="pdf : ${pdfs}">
+    <td th:text="${pdf.user.username}"></td>
+    <td th:text="${pdf.filename}"></td>
+    <td th:text="${pdf.filepath}"></td>
+    <td>
+      <a th:href="@{/professor/download/{id}(id=${pdf.id})}">Download</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
