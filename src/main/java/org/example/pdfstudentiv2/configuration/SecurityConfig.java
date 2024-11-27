@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/student/**","upload").hasRole("STUDENT")
-                                .requestMatchers("/professor/**").hasRole("PROFESSOR")
+                                .requestMatchers("/professor/**", "pdf-list").hasRole("PROFESSOR")
                                 .requestMatchers("/login", "/register").permitAll()
                                 .anyRequest().authenticated()
                 )

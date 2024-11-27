@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "pdfs")
 public class PDFFile {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,13 +17,20 @@ public class PDFFile {
 
     @Getter
     @Setter
-    private String filepath; // Path where the file is stored
+    private String filepath;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @Setter
     @Getter
     private User user;
 
-    // Getters and setters omitted for brevity
+    // Add getters and setters for id if needed
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
