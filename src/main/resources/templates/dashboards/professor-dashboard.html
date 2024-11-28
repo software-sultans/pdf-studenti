@@ -3,6 +3,49 @@
 <head>
     <title>Client Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+        }
+
+        .main-content {
+            flex: 3;
+        }
+
+        .sidebar {
+            flex: 1;
+            border-left: 1px solid #ddd;
+            padding-left: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #suggestions {
+            display: none; /* Ascunde sugestiile inițial */
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Asigură-te că lățimea suggetiilor este aceeași cu a barei de căutare */
+            position: absolute; /* Poziționează lista sub câmpul de căutare */
+            top: 100%; /* Se aliniază exact sub input */
+            left: 50%;
+            transform: translateX(-72.5%);
+            z-index: 1000; /* Asigură vizibilitatea asupra altor elemente */
+        }
+
+        #suggestions li {
+            cursor: pointer;
+            padding: 8px 15px;
+        }
+
+        #suggestions li:hover {
+            background-color: #f8f9fa;
+        }
+
+    </style>
 </head>
 <body>
 <div class="container text-center">
@@ -10,18 +53,90 @@
     <p>This is your dashboard. Here you will see available products and offers.</p>
 
     <!-- Search Bar and All PDFs Button -->
-    <div class="d-flex justify-content-center my-4">
+    <div class="d-flex justify-content-center my-4 position-relative">
         <!-- Search Bar -->
-        <input type="text" class="form-control me-2" style="max-width: 300px;" placeholder="Search..." aria-label="Search">
+        <input type="text" id="search-bar" class="form-control me-2" style="max-width: 300px;"
+               placeholder="Search..." aria-label="Search" autocomplete="off">
 
         <!-- Redirect Button -->
         <a href="/professor/all-pdfs" class="btn btn-primary">View All PDFs</a>
+
+        <!-- Sugestii de autocomplete vor fi plasate aici, direct sub câmpul de căutare -->
+        <ul id="suggestions" class="list-group position-absolute" style="max-width: 300px; z-index: 1000; margin-top: 5px; display: none;">
+        </ul>
     </div>
 
     <!-- Placeholder for client content -->
     <div class="content-placeholder my-5">
         <p>Content will be displayed here for clients.</p>
     </div>
+
+    <div class="dashboard-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <p>Professor-specific content goes here.</p>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h5>Students</h5>
+            <ul class="list-group">
+                <!-- Iterează lista de studenți -->
+                <li th:each="student : ${students}" class="list-group-item">
+                    <span th:text="${student.username}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 </body>
+<script>
+    const searchBar = document.getElementById('search-bar');
+    const suggestionsList = document.getElementById('suggestions');
+
+    searchBar.addEventListener('input', function () {
+        const query = searchBar.value;
+
+        if (query.length > 0) {
+            fetch(`/professor/search-students?term=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsList.innerHTML = ''; // Curăță sugestiile anterioare
+                    if (data.length > 0) {
+                        suggestionsList.style.display = 'block'; // Afișăm lista de sugestii
+                        data.forEach(student => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = student;
+                            listItem.className = 'list-group-item'; // Bootstrap styling
+                            listItem.style.cursor = 'pointer';
+
+                            // Adaugă eveniment de click pentru selectarea sugestiei
+                            listItem.addEventListener('click', function () {
+                                searchBar.value = student;
+                                suggestionsList.innerHTML = ''; // Ascunde sugestiile
+                                suggestionsList.style.display = 'none'; // Ascunde lista când se face selectia
+                            });
+
+                            suggestionsList.appendChild(listItem);
+                        });
+                    } else {
+                        suggestionsList.style.display = 'none'; // Nu afișa sugestiile dacă nu sunt rezultate
+                    }
+                })
+                .catch(error => console.error('Error fetching students:', error));
+        } else {
+            suggestionsList.style.display = 'none'; // Ascunde lista când nu există text în căutare
+        }
+    });
+
+    // Închide sugestiile dacă se face click în altă parte
+    document.addEventListener('click', function (event) {
+        if (!searchBar.contains(event.target)) {
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+        }
+    });
+</script>
+
+
 </html>

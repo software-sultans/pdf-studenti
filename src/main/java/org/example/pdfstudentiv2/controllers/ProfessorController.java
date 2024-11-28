@@ -1,8 +1,11 @@
 package org.example.pdfstudentiv2.controllers;
 
 import jakarta.annotation.Resource;
+import org.example.pdfstudentiv2.Role;
 import org.example.pdfstudentiv2.entities.PDFFile;
+import org.example.pdfstudentiv2.entities.User;
 import org.example.pdfstudentiv2.repositories.PDFFileRepository;
+import org.example.pdfstudentiv2.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
@@ -13,9 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,8 +31,13 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/professor")
 public class ProfessorController {
+    @Autowired
+    private UserRepository userRepository; // Repository pentru lista de studenți
     @GetMapping("/dashboard")
-    public String professorDashboard() {
+    public String professorDashboard(Model model) {
+        List<User> students = userRepository.findByRole(Role.STUDENT);
+        model.addAttribute("students", students);
+
         return "dashboards/professor-dashboard";
     }
     @Autowired
@@ -68,5 +74,16 @@ public class ProfessorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/search-students")
+    @ResponseBody
+    public List<String> searchStudents(@RequestParam String term){
+        List<User> matchingStudents = userRepository.findByRole(Role.STUDENT).stream()
+                .filter(student -> student.getUsername().toLowerCase().contains(term.toLowerCase()))
+                .collect(Collectors.toList());
+        return matchingStudents.stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 }
